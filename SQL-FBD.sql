@@ -22,11 +22,13 @@ PRIMARY KEY(titulo));
 
 CREATE TABLE Cursos
 (idiomaCurso VARCHAR(30) NOT NULL,
+FOREIGN KEY (nomeIdi) REFERENCES Idioma(nomeIdi),
 PRIMARY KEY(idiomaCurso));
 
-CREATE TABLE Linguas
-(nomeLin VARCHAR(50) NOT NULL,
-PRIMARY KEY(nomeLin));
+CREATE TABLE Idioma
+(nomeIdi VARCHAR(50) NOT NULL,
+FOREIGN KEY (idiomaCurso) REFERENCES Cursos(idiomaCurso),
+PRIMARY KEY(nomeIdi));
 
 CREATE TABLE Item
 (nomeItem VARCHAR(50) NOT NULL,
@@ -49,7 +51,15 @@ CREATE TABLE Forum
 (idiomaForum VARCHAR(30) NOT NULL,
 PRIMARY KEY(idiomaForum));
 
+CREATE TABLE Leaderboard
+(idLeaderboard VARCHAR(30) NOT NULL,
+FOREIGN KEY (elo) REFERENCES Liga(elo),
+PRIMARY KEY(idLeaderboard));
 
+CREATE TABLE Liga
+(elo VARCHAR(30) NOT NULL,
+FOREIGN KEY (idLeaderboard) REFERENCES Leaderboard(idLeaderboard),
+PRIMARY KEY(elo));
 
 CREATE TABLE Conquista
 (nome VARCHAR(100) NOT NULL,
