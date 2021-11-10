@@ -1,14 +1,22 @@
-CREATE TABLE Estudantes
+
+
+//CREATE TABLE Estudantes
+//(email VARCHAR(50) NOT NULL,
+//nomeUser VARCHAR(50) NOT NULL,
+//PRIMARY KEY(email));
+
+//CREATE TABLE Moderadores
+//(emailMod VARCHAR(50) NOT NULL,
+//nomeMod VARCHAR(50) NOT NULL,
+//FOREIGN KEY (idiomaForum) REFERENCES Forum(idiomaForum),
+//PRIMARY KEY(emailMod));
+
+CREATE TABLE Usuario
 (email VARCHAR(50) NOT NULL,
 nomeUser VARCHAR(50) NOT NULL,
-listadeidiomas TEXT[],
+FOREIGN KEY (qualForum) REFERENCES Forum(idiomaForum),
+FOREIGN KEY (participacaoLeaderboard) REFERENCES Leaderboard(idLeaderboard),
 PRIMARY KEY(email));
-
-CREATE TABLE Moderadores
-(emailMod VARCHAR(50) NOT NULL,
-nomeMod VARCHAR(50) NOT NULL,
-PRIMARY KEY(emailMod));
-
 
 CREATE TABLE Achievements
 (nome VARCHAR(100) NOT NULL,
@@ -18,6 +26,8 @@ PRIMARY KEY(nome));
 CREATE TABLE Threads
 (titulo VARCHAR(100) NOT NULL,
 autor VARCHAR(50) NOT NULL,
+FOREIGN KEY (idiomaForum) REFERENCES Forum(idiomaForum),
+FOREIGN KEY (email) REFERENCES Usuario(email),
 PRIMARY KEY(titulo));
 
 CREATE TABLE Cursos
@@ -66,7 +76,7 @@ CREATE TABLE Conquista
 email VARCHAR(50) NOT NULL,
 PRIMARY KEY (nome,email),
 FOREIGN KEY (nome) REFERENCES Conquista(nome),
-FOREIGN KEY (email) REFERENCES Estudantes(email));
+FOREIGN KEY (email) REFERENCES Usuario(email));
 
 CREATE TABLE Compra
 (nomeItem VARCHAR(50) NOT NULL,
@@ -74,21 +84,21 @@ email VARCHAR(50) NOT NULL,
 quantidade INTEGER NOT NULL
 PRIMARY KEY (nomeItem,email),
 FOREIGN KEY (nomeItem) REFERENCES Compra(nomeItem),
-FOREIGN KEY (email) REFERENCES Estudantes(email));
+FOREIGN KEY (email) REFERENCES Usuario(email));
 
 CREATE TABLE Inscrito
 (idiomaCurso VARCHAR(30) NOT NULL,
 email VARCHAR(50) NOT NULL,
 PRIMARY KEY (idiomaCurso,email),
 FOREIGN KEY (idiomaCurso) REFERENCES Cursos(idiomaCurso),
-FOREIGN KEY (email) REFERENCES Estudantes(email));
+FOREIGN KEY (email) REFERENCES Usuario(email));
 
 CREATE TABLE Resposta
 (titulo VARCHAR(100) NOT NULL,
 email VARCHAR(50) NOT NULL,
 PRIMARY KEY (titulo,email),
 FOREIGN KEY (titulo) REFERENCES Threads(titulo),
-FOREIGN KEY (email) REFERENCES Estudantes(email)); //Acho que aqui está errado o uso de estudantes
+FOREIGN KEY (email) REFERENCES Usuario(email)); //Acho que aqui está errado o uso de estudantes, mas não sei como fazer os usários daí
 
 
 
@@ -132,4 +142,4 @@ INSERT INTO Forum VALUES ('Inglês');
 INSERT INTO Forum VALUES ('Japonês');
 
 
-SELECT * FROM Palavras WHERE niveldedominio = 10;
+// SELECT * FROM Palavras WHERE niveldedominio = 10;
