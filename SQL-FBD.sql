@@ -15,7 +15,9 @@ CREATE TABLE Usuario
 (email VARCHAR(50) NOT NULL,
 nomeUser VARCHAR(50) NOT NULL,
 FOREIGN KEY (qualForum) REFERENCES Forum(idiomaForum),
-FOREIGN KEY (participacaoLeaderboard) REFERENCES Leaderboard(idLeaderboard),
+FOREIGN KEY (idLeaderboard) REFERENCES Leaderboard(idLeaderboard),
+FOREIGN KEY (moderadorQueBaniuEle) REFERENCES Usuario(email);
+FOREIGN KEY (elo) REFERENCES Liga(elo);
 PRIMARY KEY(email));
 
 CREATE TABLE Achievements
@@ -55,6 +57,7 @@ CREATE TABLE Palavras
 (nomePal VARCHAR(25) NOT NULL,
 niveldedominio INTEGER NOT NULL,
 ultimavezvista   DATE NOT NULL,
+FOREIGN KEY (nomePal) REFERENCES Palavras(nomePal);
 PRIMARY KEY(nomePal));
 
 CREATE TABLE Forum
