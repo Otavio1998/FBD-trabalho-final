@@ -36,6 +36,7 @@ PRIMARY KEY(nomeItem));
 CREATE TABLE Licoes
 (assunto VARCHAR(50) NOT NULL,
 fases INTEGER  NOT NULL,
+FOREIGN KEY (idiomaCurso) REFERENCES Cursos(idiomaCurso),
 PRIMARY KEY(assunto));
 
 CREATE TABLE Palavras
@@ -47,6 +48,37 @@ PRIMARY KEY(nomePal));
 CREATE TABLE Forum
 (idiomaForum VARCHAR(30) NOT NULL,
 PRIMARY KEY(idiomaForum));
+
+
+
+CREATE TABLE Conquista
+(nome VARCHAR(100) NOT NULL,
+email VARCHAR(50) NOT NULL,
+PRIMARY KEY (nome,email),
+FOREIGN KEY (nome) REFERENCES Conquista(nome),
+FOREIGN KEY (email) REFERENCES Estudantes(email));
+
+CREATE TABLE Compra
+(nomeItem VARCHAR(50) NOT NULL,
+email VARCHAR(50) NOT NULL,
+quantidade INTEGER NOT NULL
+PRIMARY KEY (nomeItem,email),
+FOREIGN KEY (nomeItem) REFERENCES Compra(nomeItem),
+FOREIGN KEY (email) REFERENCES Estudantes(email));
+
+CREATE TABLE Inscrito
+(idiomaCurso VARCHAR(30) NOT NULL,
+email VARCHAR(50) NOT NULL,
+PRIMARY KEY (idiomaCurso,email),
+FOREIGN KEY (idiomaCurso) REFERENCES Cursos(idiomaCurso),
+FOREIGN KEY (email) REFERENCES Estudantes(email));
+
+CREATE TABLE Resposta
+(titulo VARCHAR(100) NOT NULL,
+email VARCHAR(50) NOT NULL,
+PRIMARY KEY (titulo,email),
+FOREIGN KEY (titulo) REFERENCES Threads(titulo),
+FOREIGN KEY (email) REFERENCES Estudantes(email)); //Acho que aqui está errado o uso de estudantes
 
 
 
