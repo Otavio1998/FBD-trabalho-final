@@ -1,4 +1,7 @@
 
+
+
+
 DROP TABLE IF EXISTS Forum;
 CREATE TABLE Forum
 (idiomaForum VARCHAR(30) NOT NULL,
@@ -219,9 +222,8 @@ INSERT INTO Inscrito VALUES('Inglês','Daenerys@targaryen.com');
 INSERT INTO Inscrito VALUES('Inglês','Brynden@rivers.com');
 
 INSERT INTO Compra VALUES('Streak Freeze', 'joseph_joestar@jojo.com',2);
-INSERT INTO Compra VALUES('Dobro ou Nada', 'joseph_joestar@jojo.com',3);
 INSERT INTO Compra VALUES('Streak Freeze', 'Daenerys@targaryen.com',1);
-
+INSERT INTO Compra VALUES('Dobro ou Nada', 'Brynden@rivers.com',3);
 
 INSERT INTO Leaderboard VALUES ('Platina','idLeaderboard');
 
@@ -242,7 +244,4 @@ INSERT INTO Leaderboard VALUES ('Platina','idLeaderboard');
 
 -- SELECT nomeItem FROM Compra WHERE Compra.email = (SELECT Usuario.email FROM Usuario JOIN Inscrito ON Usuario.email = Inscrito.email WHERE Inscrito.email = 'joseph_joestar@jojo.com');
 
-
-
-
-
+-- SELECT nomeUser FROM Usuario JOIN Inscrito ON Usuario.email = Inscrito.email JOIN Compra ON  Compra.email =  Usuario.email WHERE Inscrito.idiomaCurso = 'Inglês' AND NOT EXISTS (SELECT DISTINCT Compra.email WHERE nomeItem = 'Dobro ou Nada') ;
