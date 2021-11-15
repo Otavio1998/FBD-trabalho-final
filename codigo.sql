@@ -107,12 +107,13 @@ CREATE TABLE Conquista
 DROP TABLE IF EXISTS Palavras;
 CREATE TABLE Palavras
 (
+	id VARCHAR(25) NOT NULL,
 	nomePal VARCHAR(25) NOT NULL,
 	nomeIdi VARCHAR(50) NOT NULL,
 	FOREIGN KEY (nomeIdi) REFERENCES Idioma(nomeIdi)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE,
-	PRIMARY KEY(nomePal)
+	PRIMARY KEY(id)
 );
 
 DROP TABLE IF EXISTS Aprende;
@@ -120,15 +121,15 @@ CREATE TABLE Aprende
 (
 	niveldedominio INTEGER NOT NULL,
 	ultimavezvista DATE NOT NULL,
-	nomePal VARCHAR(25) NOT NULL,
+	idPalavra VARCHAR(25) NOT NULL,
 	email VARCHAR(50) NOT NULL,
-	FOREIGN KEY (nomePal) REFERENCES Palavras(nomePal)
+	FOREIGN KEY (idPalavra) REFERENCES Palavras(id)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE,
 	FOREIGN KEY(email) REFERENCES Usuario(email)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE,
-	PRIMARY KEY(nomePal, email)
+	PRIMARY KEY(idPalavra, email)
 );
 
 DROP TABLE IF EXISTS Cursos;
@@ -256,17 +257,18 @@ INSERT INTO Conquista VALUES ('Estudioso', 'Daenerys@targaryen.com');
 INSERT INTO Conquista VALUES ('Mago', 'Brynden@rivers.com');
 INSERT INTO Conquista VALUES ('Poliglota', 'Brynden@rivers.com');
 
-INSERT INTO Palavras VALUES('Magho', 'Dothraki');
-INSERT INTO Palavras VALUES('Estudioso', 'Japones');
-INSERT INTO Palavras VALUES('Refrigerante', 'Ingles');
-INSERT INTO Palavras VALUES('Mago', 'Ingles');
-INSERT INTO Palavras VALUES('Potato', 'Ingles');
+INSERT INTO Palavras VALUES(0, 'Magho', 'Dothraki');
+INSERT INTO Palavras VALUES(1, 'Estudioso', 'Japones');
+INSERT INTO Palavras VALUES(2, 'Refrigerante', 'Ingles');
+INSERT INTO Palavras VALUES(3, 'Mage', 'Ingles');
+INSERT INTO Palavras VALUES(4, 'Potato', 'Ingles');
 
-INSERT INTO Aprende VALUES (10, '2012-12-12', 'Potato', 'joseph_joestar@jojo.com');
-INSERT INTO Aprende VALUES (6, '2012-12-12', 'Estudioso', 'joseph_joestar@jojo.com');
-INSERT INTO Aprende VALUES (6, '2012-12-12', 'Potato', 'Daenerys@targaryen.com');
-INSERT INTO Aprende VALUES (7, '2012-12-12', 'Magho', 'Daenerys@targaryen.com');
-INSERT INTO Aprende VALUES (10, '2012-12-12', 'Estudioso', 'Daenerys@targaryen.com');
+INSERT INTO Aprende VALUES (10, '2012-12-12', 4, 'joseph_joestar@jojo.com');
+INSERT INTO Aprende VALUES (6, '2012-12-12', 1, 'joseph_joestar@jojo.com');
+INSERT INTO Aprende VALUES (6, '2012-12-12', 4, 'Daenerys@targaryen.com');
+INSERT INTO Aprende VALUES (9, '2012-12-12', 3, 'Daenerys@targaryen.com');
+INSERT INTO Aprende VALUES (7, '2012-12-12', 0, 'Daenerys@targaryen.com');
+INSERT INTO Aprende VALUES (10, '2012-12-12', 1, 'Daenerys@targaryen.com');
 
 INSERT INTO Cursos VALUES ('Italiano', 'Espanhol');
 INSERT INTO Cursos VALUES ('Japones', 'Ingles');
@@ -329,40 +331,42 @@ SELECT Usuario.nomeUser, COUNT(Conquista.nome)
 	WHERE nomeItem = 'Streak Freeze'
 GROUP BY Usuario.email;
 
--- Mostra os usuário falantes de ingles que aprenderam mais que uma palavra e quantas palavras eles aprederam, em ordem descendente.
-SELECT nomeUser, COUNT(nomePal)
+-- Mostra os usuário falantes de inglês que aprenderam mais que uma palavra e quantas palavras eles aprederam, em ordem descendente.
+SELECT nomeUser, COUNT(Aprende.idPalavra)
 	FROM Usuario
-	JOIN Inscrito ON Usuario.email = Inscrito.email
+	JOIN Inscrito ON Inscrito.email = Usuario.email
 	JOIN Aprende ON Aprende.email = Usuario.email
 WHERE Inscrito.nomeIdiomaOrigem = 'Ingles'
-	GROUP BY nomeUser HAVING COUNT(nomePal) > 1
-	ORDER BY COUNT(nomePal) DESC;
+	GROUP BY nomeUser HAVING COUNT(Aprende.idPalavra) > 1
+	ORDER BY COUNT(Aprende.idPalavra) DESC;
 
--- Mostra os estudantes de japones que compraram os itens 'Dobro ou Nada' e 'Streak Freeze'.
+-- Mostra os estudantes de japonês que compraram os itens 'Dobro ou Nada' e 'Streak Freeze'.
 SELECT Usuario.email
 	FROM Usuario
-	JOIN Inscrito ON Usuario.email = Inscrito.email
+	JOIN Inscrito ON Inscrito.email = Usuario.email
 	JOIN Compra ON Compra.email = Usuario.email
 WHERE Inscrito.nomeIdiomaDestino = 'Japones' AND nomeItem = 'Streak Freeze' AND Usuario.email IN (
 	SELECT Usuario.email
 		FROM Usuario
-		JOIN Inscrito ON Usuario.email = Inscrito.email
+		JOIN Inscrito ON Inscrito.email = Usuario.email
 		JOIN Compra ON Compra.email = Usuario.email
 	WHERE nomeItem = 'Dobro ou Nada'
 );
 
--- Mostra os estudantes que aprenderam tanto como falar Batata quanto sobre Animais, em qualquer língua
-SELECT Usuario.email
+-- Mostra os estudantes que aprenderam ambas palavras Potato e Mago.
+SELECT nomeUser
 	FROM Usuario
-	JOIN Inscrito ON Inscrito.email = Usuario.email
-	JOIN Licoes ON Licoes.nomeIdiomaDestino = Inscrito.nomeIdiomaDestino
-WHERE Licoes.assunto = 'Familia' AND Usuario.email IN (
-	SELECT
-		FROM Licoes ON 
-	WHERE Licoes.assunto = 'Animais' and Licoes.nomeIdiomaDestino = Inscrito.nomeIdiomaDestino
+	JOIN Aprende ON Aprende.email = Usuario.email
+	JOIN Palavras ON Palavras.id = Aprende.idPalavra
+WHERE nomePal = 'Potato' AND Usuario.email IN (
+	SELECT Usuario.email
+		FROM Usuario
+		JOIN Aprende ON Aprende.email = Usuario.email
+		JOIN Palavras ON Palavras.id = Aprende.idPalavra
+	WHERE nomePal = 'Mago'
 );
 
--- Mostra os usuarios falantes de ingles que não possuem ambos itens 'Dobro ou Nada' e 'Dobro ou Nada Gold'.
+-- Mostra os usuarios falantes de inglês que não possuem ambos itens 'Dobro ou Nada' e 'Dobro ou Nada Gold'.
 SELECT nomeUser
 	FROM Usuario
 	JOIN Inscrito ON Inscrito.email = Usuario.email
@@ -389,7 +393,7 @@ SELECT UsuariosBanidosESeusBanidores.banidor_nomeUser, UsuariosBanidosESeusBanid
 	JOIN Threads ON Threads.email = usuarioBanido_email
 	JOIN Forum ON Forum.id = Threads.idForum AND Forum.id = UsuariosBanidosESeusBanidores.banidor_idForum;
 
--- Mostra o usuario, elo e as conquistas dos usuarios que falam ingles.
+-- Mostra o usuario, elo e as conquistas dos usuarios que falam inglês.
 SELECT nomeUser, elo, Conquista.nome
 	FROM Usuario
 	JOIN Inscrito ON Usuario.email = Inscrito.email
@@ -404,7 +408,7 @@ SELECT conteudo
 	JOIN Usuario ON Usuario.email = Threads.email
 WHERE nomeUser = 'MotherOfDragons';
 
--- Mostra o elo dos usuarios que falam ingles e possuem a conquista 'Poliglota'.
+-- Mostra o elo dos usuários que falam inglês e possuem a conquista 'Poliglota'.
 SELECT elo
 	FROM Usuario
 	JOIN Inscrito ON Usuario.email = Inscrito.email
